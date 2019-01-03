@@ -1,0 +1,42 @@
+{
+  "name": "ctrbot-dialogflow",
+  "version": "0.0.1",
+  "description": "CTRBot to do a favor",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdizz/ctrbot-dialogflow.git"
+  },
+  "devDependencies": {
+    "typescript": "~3.2.2",
+    "@types/express": "~4.16.0",
+    "@types/node": "~8.10.39"
+  },
+  "keywords": [
+    "chatbot",
+    "dialogflow",
+    "typescript",
+    "google",
+    "cloud",
+    "functions"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/webdizz/ctrbot-dialogflow/issues"
+  },
+  "homepage": "https://github.com/webdizz/ctrbot-dialogflow#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "bunyan": "^1.8.12",
+    "cors": "^2.8.5",
+    "dialogflow": "^0.7.0",
+    "express": "^4.16.3",
+    "request": "^2.88.0"
+  }
+}

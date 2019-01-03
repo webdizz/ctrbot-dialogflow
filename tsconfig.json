@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "checkJs": true,
+        "allowJs": true,
+        "outDir": "build",
+        "rootDir": ".",
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "preserveConstEnums": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "typeRoots": ["node_modules/@types"]
+    },
+    "filesGlob": [
+        "*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
+    "compileOnSave": false
+}
