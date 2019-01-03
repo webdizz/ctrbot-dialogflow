@@ -2,7 +2,7 @@
   "name": "ctrbot-dialogflow",
   "version": "0.0.1",
   "description": "CTRBot to do a favor",
-  "main": "build/index.js",
+  "main": "build/src/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "watch": "tsc --watch",

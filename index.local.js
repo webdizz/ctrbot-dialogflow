@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
-const webhook = require('./build/index')
+const webhook = require('./build/src/index')
 
 webhookRouter.post('*', function (req, res) {
     webhook.webhookHandler(req, res)
