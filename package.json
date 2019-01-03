@@ -4,18 +4,15 @@
   "description": "CTRBot to do a favor",
   "main": "build/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build tsconfig.json",
     "watch": "tsc --watch",
+    "deploy": "gcloud beta functions deploy webhookHandler --runtime nodejs8 --trigger-http --memory 128MB --env-vars-file .env.yaml",
+    "redeploy": "tsc --build tsconfig.json && gcloud beta functions deploy webhookHandler --runtime nodejs8 --trigger-http --memory 128MB --env-vars-file .env.yaml",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/webdizz/ctrbot-dialogflow.git"
-  },
-  "devDependencies": {
-    "typescript": "~3.2.2",
-    "@types/express": "~4.16.0",
-    "@types/node": "~8.10.39"
   },
   "keywords": [
     "chatbot",
@@ -31,11 +28,19 @@
     "url": "https://github.com/webdizz/ctrbot-dialogflow/issues"
   },
   "homepage": "https://github.com/webdizz/ctrbot-dialogflow#readme",
+  "devDependencies": {
+    "@types/bunyan": "^1.8.5",
+    "@types/express": "~4.16.0",
+    "@types/node": "~8.10.39",
+    "typescript": "~3.2.2"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "bunyan": "^1.8.12",
     "cors": "^2.8.5",
     "dialogflow": "^0.7.0",
+    "dialogflow-fulfillment": "^0.6.1",
+    "actions-on-google": "^2.5.0",
     "express": "^4.16.3",
     "request": "^2.88.0"
   }
