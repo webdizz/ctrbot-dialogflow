@@ -34,7 +34,7 @@ function handleWebhookRequest(request: Request, response: Response) {
     LOG.debug({ intent: agent.intent, contexts: agent.contexts }, 'debug message')
 
     let intentMap = new Map()
-    intentMap.set('order-delivery-tracking_order-email', new OrderTrackingIntentHandler().handleOrderTracking)
+    intentMap.set('order-delivery-tracking_order-email', new OrderTrackingIntentHandler(agent, LOG).handleOrderTracking())
 
     agent.handleRequest(intentMap)
 }
