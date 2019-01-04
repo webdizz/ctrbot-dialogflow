@@ -29,8 +29,6 @@ export function webhookHandler(req: Request, res: Response) {
  */
 function handleWebhookRequest(request: Request, response: Response) {
     let agent = new WebhookClient({ request: request, response: response })
-    LOG.error({ intent: agent.intent, contexts: agent.contexts, parameters: agent.parameters, session: agent.session }, 'error message')
-    LOG.info({ intent: agent.intent, contexts: agent.contexts, parameters: agent.parameters, session: agent.session }, 'info message')
     LOG.debug({ intent: agent.intent, contexts: agent.contexts, parameters: agent.parameters, session: agent.session }, 'debug message')
 
     let intentMap = new Map()
