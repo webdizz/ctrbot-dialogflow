@@ -1,11 +1,13 @@
 import { Request, Response } from 'express'
 import { WebhookClient } from 'dialogflow-fulfillment'
-import { createLogger } from 'bunyan'
+import { createLogger, levelFromName, LogLevelString } from 'bunyan'
+
+let logLevel = process.env['LOGGING_LEVEL'] as LogLevelString || levelFromName.info
 
 const LOG = createLogger({
     name: 'ctrbot/index',
     stream: process.stdout,
-    level: process.env['LOGGING_LEVEL'] || 'info'
+    level: logLevel
 })
 
 export function webhookHandler(req: Request, res: Response) {

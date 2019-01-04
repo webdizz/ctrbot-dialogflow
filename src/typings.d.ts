@@ -1,6 +1,6 @@
 declare module 'dialogflow-fulfillment'
 
 declare class WebhookClient {
-    parameters: string[]
+    parameters: { [level: string]: string };
     add(msg: string): void
 }
