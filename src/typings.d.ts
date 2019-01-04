@@ -4,10 +4,17 @@ declare class WebhookClient {
     parameters: { [level: string]: string }
     contexts: WebhookClientContext[]
     add(msg: string): void
+    add(card: Card): void
 }
 
 declare class WebhookClientContext {
     name: string
     lifespan: number
     parameters: { [level: string]: string }
+}
+
+declare class Card {
+    title: string
+    imageUrl: string
+    text: string
 }
