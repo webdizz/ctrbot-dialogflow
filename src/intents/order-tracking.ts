@@ -1,6 +1,7 @@
 import * as request from 'request-promise-native'
 import { Logger } from '@restify-ts/logger';
 import { Card } from 'dialogflow-fulfillment'
+import { ExecFileOptionsWithStringEncoding } from 'child_process';
 
 export class OrderTrackingIntentHandler {
 
@@ -34,8 +35,8 @@ export class OrderTrackingIntentHandler {
         }
     }
 
-    private createCard(title: string, imageUrl: string, text: string) {
-        return new Card({ title: title, imageUrl: imageUrl, text: text })
+    private createCard(title: string, imageUrl: ExecFileOptionsWithStringEncoding) {
+        return new Card({ title: title, imageUrl: imageUrl })
     }
 
     private handleOrderTrackingResponse(response: any, orderNumber: string) {
@@ -44,7 +45,8 @@ export class OrderTrackingIntentHandler {
         for (let product of response.products['order.status.inprogress']) {
             let eta = this.formatEta(product.eta);
             this.log.debug({ product: product })
-            this.agent.add(this.createCard(product.name, product.picture, 'Item will arrive on ' + eta))
+            this.agent.add(this.createCard(product.name, product.picture))
+            this.agent.add(`Item '${product.skuCode}' will arrive on ${eta}`)
         }
     }
 

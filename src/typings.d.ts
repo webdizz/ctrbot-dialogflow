@@ -16,5 +16,4 @@ declare class WebhookClientContext {
 declare class Card {
     title: string
     imageUrl: string
-    text: string
 }
