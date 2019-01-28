@@ -4,6 +4,7 @@ import { WebhookClient } from 'dialogflow-fulfillment'
 import { Logger } from '@restify-ts/logger'
 
 import { OrderTrackingIntentHandler } from './intents/order-tracking'
+import { ProductLookupIntentHandler } from './intents/product-lookup';
 
 const LOG = new Logger({
     name: 'ctrbot/index',
@@ -35,6 +36,7 @@ function handleWebhookRequest(request: Request, response: Response) {
 
     let intentMap = new Map()
     intentMap.set('order-delivery-tracking_order-email', new OrderTrackingIntentHandler(agent, LOG).handleOrderTracking())
+    intentMap.set('product-lookup_product-details', new ProductLookupIntentHandler(agent, LOG).handleProductLookup())
 
     agent.handleRequest(intentMap)
 }

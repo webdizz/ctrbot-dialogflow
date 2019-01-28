@@ -16,4 +16,11 @@ declare class WebhookClientContext {
 declare class Card {
     title: string
     imageUrl: string
+    buttons: CardButton[]
+}
+
+declare class CardButton {
+    constructor(postback: string, text: string)
+    postback: string
+    text: string
 }
