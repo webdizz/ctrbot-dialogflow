@@ -1,7 +1,6 @@
 import * as request from 'request-promise-native'
 import { Logger } from '@restify-ts/logger';
 import { Card } from 'dialogflow-fulfillment'
-import { ExecFileOptionsWithStringEncoding } from 'child_process';
 
 export class OrderTrackingIntentHandler {
 
@@ -35,7 +34,7 @@ export class OrderTrackingIntentHandler {
         }
     }
 
-    private createCard(title: string, imageUrl: ExecFileOptionsWithStringEncoding) {
+    private createCard(title: string, imageUrl: string) {
         return new Card({ title: title, imageUrl: imageUrl })
     }
 
