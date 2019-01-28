@@ -1,6 +1,6 @@
 import * as request from 'request-promise-native'
 import { Logger } from '@restify-ts/logger';
-import { Card, CardButton } from 'dialogflow-fulfillment'
+import { Card } from 'dialogflow-fulfillment'
 
 export class ProductLookupIntentHandler {
 
@@ -10,18 +10,15 @@ export class ProductLookupIntentHandler {
      *  Handles product lookup intent
      */
     public handleProductLookup() {
+        const ENDPOINT_PRODUCT_LOOKUP = process.env['ENDPOINT_PRODUCT_LOOKUP'] as string
         return async () => {
             let intentContextParams = this.agent.contexts[0].parameters
             let productDetails = intentContextParams['ctc-product']
 
-            const ENDPOINT_PRODUCT_LOOKUP = process.env['ENDPOINT_PRODUCT_LOOKUP'] as string
             let options = {
                 uri: ENDPOINT_PRODUCT_LOOKUP,
                 qs: {
-                    site: 'ct',
-                    format: 'json',
-                    count: '4',
-                    q4: productDetails,
+                    q: productDetails,
                 },
                 json: true
             }
@@ -36,18 +33,23 @@ export class ProductLookupIntentHandler {
     }
 
     private createCard(title: string, imageUrl: string, productUrl: string) {
-        // let cardBtn = new CardButton({ postback: productUrl, text: title })
-        return new Card({ title: title, imageUrl: imageUrl, buttons: [{ postback: productUrl, text: title }] })
+        const SITE_BASE_URL = process.env['SITE_BASE_URL'] as string
+        let card = new Card({ title: title, imageUrl: imageUrl })
+        card.setButton({ text: 'Go for product', url: SITE_BASE_URL + productUrl })
+        return card
     }
 
     private handleProductLookupResponse(response: any, productDetails: string) {
-        if (Number(response.query['total-results']) > 0) {
+        if (response.products) {
             this.agent.add(`Hello, please take a look what I was able to find for '${productDetails}':`)
-
-            for (let item of response.results) {
-                let product = item.field
-                let productUrl = product['short-pdp-url']
-                this.agent.add(this.createCard(product['prod-name'], product['thumb-img-url'], productUrl))
+            for (let product of response.products) {
+                let productUrl = product.searchLink
+                let productCode = product.productCode.replace('P', '')
+                const S7_BASE_URL = process.env['S7_BASE_URL'] as string
+                let imgUrl = `${S7_BASE_URL}${productCode}_1`
+                let card = this.createCard(product.label, imgUrl, productUrl)
+                this.log.debug({ card: card })
+                this.agent.add(card)
             }
         } else {
             this.agent.add(`I'm really sorry, was able to find something related to '${productDetails}':`)
