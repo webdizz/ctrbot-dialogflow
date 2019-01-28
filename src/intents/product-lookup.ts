@@ -1,6 +1,6 @@
 import * as request from 'request-promise-native'
 import { Logger } from '@restify-ts/logger';
-import { Card } from 'dialogflow-fulfillment'
+import { Card, Suggestion } from 'dialogflow-fulfillment'
 
 export class ProductLookupIntentHandler {
 
@@ -15,20 +15,26 @@ export class ProductLookupIntentHandler {
             let intentContextParams = this.agent.contexts[0].parameters
             let productDetails = intentContextParams['ctc-product']
 
-            let options = {
-                uri: ENDPOINT_PRODUCT_LOOKUP,
-                qs: {
-                    q: productDetails,
-                },
-                json: true
+            if (productDetails.toLowerCase().includes('ok') || productDetails.toLowerCase().includes('thank')) {
+                // lets close product lookup intent
+                this.agent.add('My pleasure!')
+                this.agent.clearOutgoingContexts()
+            } else {
+                let options = {
+                    uri: ENDPOINT_PRODUCT_LOOKUP,
+                    qs: {
+                        q: productDetails,
+                    },
+                    json: true
+                }
+                await request.get(options)
+                    .then((response) => {
+                        this.handleProductLookupResponse(response, productDetails)
+                    }).catch(error => {
+                        this.log.error(error)
+                        this.agent.add(`I'm really sorry, but something wrong happened when I tried to find a product '${productDetails}' ;(`)
+                    })
             }
-            await request.get(options)
-                .then((response) => {
-                    this.handleProductLookupResponse(response, productDetails)
-                }).catch(error => {
-                    this.log.error(error)
-                    this.agent.add(`I'm really sorry, but something wrong happened when I tried to find a product '${productDetails}' ;(`)
-                })
         }
     }
 
@@ -40,7 +46,7 @@ export class ProductLookupIntentHandler {
     }
 
     private handleProductLookupResponse(response: any, productDetails: string) {
-        if (response.products) {
+        if (response.products.length > 0) {
             this.agent.add(`Hello, please take a look what I was able to find for '${productDetails}':`)
             for (let product of response.products) {
                 let productUrl = product.searchLink
@@ -48,9 +54,9 @@ export class ProductLookupIntentHandler {
                 const S7_BASE_URL = process.env['S7_BASE_URL'] as string
                 let imgUrl = `${S7_BASE_URL}${productCode}_1`
                 let card = this.createCard(product.label, imgUrl, productUrl)
-                this.log.debug({ card: card })
                 this.agent.add(card)
             }
+            this.agent.add(new Suggestion('Thanks!'))
         } else {
             this.agent.add(`I'm really sorry, was able to find something related to '${productDetails}':`)
         }

@@ -5,6 +5,7 @@ declare class WebhookClient {
     contexts: WebhookClientContext[]
     add(msg: string): void
     add(card: Card): void
+    clearOutgoingContexts(): void
 }
 
 declare class WebhookClientContext {
@@ -16,23 +17,19 @@ declare class WebhookClientContext {
 declare class Card extends RichResponse {
     title: string
     imageUrl: string
-    public setButton(button: {
+    setButton(button: {
         text: string,
         url: string,
     }): Card
 }
+declare class Suggestion extends RichResponse {
+    constructor(suggestion: string | object);
 
-// declare class CardButton {
-//     postback: string
-//     // text: string
-// }
-
-// export class RichResponse {
-//     public setPlatform(platform: string): RichResponse
-//   }
+    setReply(reply: string): Suggestion
+}
 
 declare class RichResponse {
-    public setPlatform(platform: string): RichResponse
+    setPlatform(platform: string): RichResponse
 }
 
 declare module 'dialogflow-fulfillment/src/rich-responses/rich-response' {
