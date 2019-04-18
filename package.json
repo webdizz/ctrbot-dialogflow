@@ -4,8 +4,10 @@
   "description": "CTRBot to do a favor",
   "main": "build/src/index.js",
   "scripts": {
+    "start:local": "npm run build && node -r dotenv/config index.local.js",
     "build": "tsc --build tsconfig.json",
-    "watch": "tsc --watch",
+    "watch-ts": "tsc --watch",
+    "watch-node": "nodemon -r dotenv/config index.local.js",
     "deploy": "gcloud beta functions deploy webhookHandler --runtime nodejs8 --trigger-http --memory 128MB --env-vars-file .env.yaml",
     "redeploy": "tsc --build tsconfig.json && gcloud beta functions deploy webhookHandler --runtime nodejs8 --trigger-http --memory 128MB --env-vars-file .env.yaml",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -33,6 +35,8 @@
     "@types/node": "~8.10.39",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
+    "dotenv": "^7.0.0",
+    "nodemon": "^1.18.11",
     "typescript": "~3.2.2"
   },
   "dependencies": {
