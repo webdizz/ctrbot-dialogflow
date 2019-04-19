@@ -29,12 +29,53 @@ export class ProductLookupIntentHandler {
                 }
                 await request.get(options)
                     .then((response) => {
-                        this.handleProductLookupResponse(response, productDetails)
-                    }).catch(error => {
+                        this.handleProductLookupResponse(response, productDetails);
+                        return response;
+                    })
+                    .then((response) => {
+                        return this.addToCart(response);   
+                    })
+                    .catch(error => {
                         this.log.error(error)
                         this.agent.add(`I'm really sorry, but something wrong happened when I tried to find a product '${productDetails}' ;(`)
                     })
             }
+        }
+    }
+
+    private addToCart(response: any): Promise<void> | void {
+        const ENDPOINT_ADD_TO_CART = process.env['ENDPOINT_ADD_TO_CART'] as string
+        if (response.products.length) {
+            const productToOrder = response.products[0].productCode.replace('P', '')
+            let options = {
+                uri: ENDPOINT_ADD_TO_CART,
+                qs: {
+                    lang: 'en',
+                    store: '0100'
+                },
+                body: {
+                    code:productToOrder,
+                    quantity:'1',
+                    skuDeliveryMode:'PAY_AND_PICKUP'
+                },
+                json: true,
+                strictSSL: false
+            }
+            return request.post(options)
+                .then((response)=>this.handleAddToCartResponse(response, productToOrder))
+                .catch(error => {
+                    this.log.error(error)
+                    this.agent.add(`I'm really sorry, but something wrong happened when I tried to order a product '${productToOrder}' ;(`)
+                })
+        }
+    }
+
+    private handleAddToCartResponse(response: any, productToOrder: string): void {
+        if (response.status === 'success') {
+            const cartId = response.cartId
+            this.agent.add(`I ordered for you product '${productToOrder}'. Your order code is '${cartId}'`)
+        } else {
+            this.agent.add(`Sorry, I'm' unable to order '${productToOrder}' at the moment.`)
         }
     }
 
