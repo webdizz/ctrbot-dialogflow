@@ -5,6 +5,7 @@ import { Logger } from '@restify-ts/logger'
 
 import { OrderTrackingIntentHandler } from './intents/order-tracking'
 import { ProductLookupIntentHandler } from './intents/product-lookup';
+import { AddToCartIntentHandler } from './intents/add-to-cart';
 
 const LOG = new Logger({
     name: 'ctrbot/index',
@@ -33,11 +34,11 @@ export function webhookHandler(req: Request, res: Response) {
 function handleWebhookRequest(request: Request, response: Response) {
     let agent = new WebhookClient({ request: request, response: response })
     LOG.debug({ intent: agent.intent, contexts: agent.contexts }, 'debug message')
-    
+
     let intentMap = new Map()
     intentMap.set('order-delivery-tracking_order-email', new OrderTrackingIntentHandler(agent, LOG).handleOrderTracking())
     intentMap.set('product-lookup_product-details', new ProductLookupIntentHandler(agent, LOG).handleProductLookup())
-    intentMap.set('Order product', new ProductLookupIntentHandler(agent, LOG).handleProductLookup())
+    intentMap.set('Order product', new AddToCartIntentHandler(agent, LOG).handleAddToCart())
     
     agent.handleRequest(intentMap)
 }

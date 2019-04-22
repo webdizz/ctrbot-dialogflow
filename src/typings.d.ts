@@ -6,6 +6,8 @@ declare class WebhookClient {
     add(msg: string): void
     add(card: Card): void
     clearOutgoingContexts(): void
+    handleRequest(intentMap: Map<string, Function>): void
+    setContext(context: WebhookClientContext): void
 }
 
 declare class WebhookClientContext {

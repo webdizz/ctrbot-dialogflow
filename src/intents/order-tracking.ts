@@ -24,17 +24,18 @@ export class OrderTrackingIntentHandler {
                 },
                 json: true
             }
-            await request.post(options)
-                .then((response) => {
-                    this.handleOrderTrackingResponse(response, orderNumber)
-                }).catch(error => {
-                    this.log.error(error)
-                    this.agent.add(`I'm really sorry, but something wrong happened when I tried to find your order '${orderNumber}' ;(`)
-                })
+            try {
+                const response = await request.post(options);
+
+                this.handleOrderTrackingResponse(response, orderNumber);
+            } catch (error) {
+                this.log.error(error);
+                this.agent.add(`I'm really sorry, but something wrong happened when I tried to find your order '${orderNumber}' ;(`);
+            }
         }
     }
 
-    private createCard(title: string, imageUrl: string) {
+    private createCard(title: string, imageUrl: string): Card {
         return new Card({ title: title, imageUrl: imageUrl })
     }
 
