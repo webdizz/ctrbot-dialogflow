@@ -1,6 +1,6 @@
-import * as request from 'request-promise-native'
 import { Logger } from '@restify-ts/logger';
 import { Card, Suggestion } from 'dialogflow-fulfillment'
+import { ProductLookupService } from '../service/product-lookup.service';
 
 export class ProductLookupIntentHandler {
 
@@ -10,35 +10,27 @@ export class ProductLookupIntentHandler {
      *  Handles product lookup intent
      */
     public handleProductLookup() {
-        const ENDPOINT_PRODUCT_LOOKUP = process.env['ENDPOINT_PRODUCT_LOOKUP'] as string
         return async () => {
-            let intentContextParams = this.agent.contexts[0].parameters
-            let productDetails = intentContextParams['ctc-product']
+            let intentContextParams = this.agent.contexts[0].parameters;
+            let productDetails = intentContextParams['ctc-product'];
 
             if (productDetails.toLowerCase().includes('ok') || productDetails.toLowerCase().includes('thank')) {
                 // lets close product lookup intent
-                this.agent.add('My pleasure!')
-                this.agent.clearOutgoingContexts()
+                this.agent.add('My pleasure!');
+                this.agent.clearOutgoingContexts();
             } else {
-                let options = {
-                    uri: ENDPOINT_PRODUCT_LOOKUP,
-                    qs: {
-                        q: productDetails,
-                    },
-                    json: true
+                try {
+                    const response = await ProductLookupService.getProductSuggestions(productDetails);
+                    this.handleProductLookupResponse(response, productDetails);
+                } catch (error) {
+                    this.log.error(error);
+                    this.agent.add(`I'm really sorry, but something wrong happened when I tried to find a product '${productDetails}' ;(`);
                 }
-                await request.get(options)
-                    .then((response) => {
-                        this.handleProductLookupResponse(response, productDetails)
-                    }).catch(error => {
-                        this.log.error(error)
-                        this.agent.add(`I'm really sorry, but something wrong happened when I tried to find a product '${productDetails}' ;(`)
-                    })
             }
         }
     }
-
-    private createCard(title: string, imageUrl: string, productUrl: string) {
+    
+    private createCard(title: string, imageUrl: string, productUrl: string): Card {
         const SITE_BASE_URL = process.env['SITE_BASE_URL'] as string
         let card = new Card({ title: title, imageUrl: imageUrl })
         card.setButton({ text: 'Go for product', url: SITE_BASE_URL + productUrl })
