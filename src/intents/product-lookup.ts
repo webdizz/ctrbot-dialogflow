@@ -39,7 +39,15 @@ export class ProductLookupIntentHandler {
 
     private handleProductLookupResponse(response: any, productDetails: string) {
         if (response.products.length > 0) {
-            this.agent.add(`Hello, please take a look what I was able to find for '${productDetails}':`)
+            const productCodes: string = response.products.map((product: any) => product.productCode.replace('P', '')).join(',');
+            
+            this.agent.setContext({
+                name: 'search-results',
+                lifespan: 2,
+                parameters: {products: productCodes}
+            });
+
+            //this.agent.add(`Hello, please take a look what I was able to find for '${productDetails}':`)
             for (let product of response.products) {
                 let productUrl = product.searchLink
                 let productCode = product.productCode.replace('P', '')
